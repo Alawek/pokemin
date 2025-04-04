@@ -1,29 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    <div id="header"></div>
+    <div id="header" style="display: flex; justify-content: space-evenly;">
+
+        <div id="user-info"></div>
+        <!-- Fenêtre modale -->
+        <div id="myModal" class="modal" onclick="closeModal()">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="modalFormContainer"></div>
+            </div>
+        </div>
+        <div id="loginArea"></div>
+    </div>
     <div id="main" style="display: flex;gap: 10px;">
         <div id="pokemin1" style="flex: 1; /* Les div prennent la même largeur */
         border: 1px solid #000;
         padding: 10px;
      ">
 
+
         </div>
         <div id="ecran"></div>
         <div id="pokemin2" style="flex: 1; /* Les div prennent la même largeur */
         border: 1px solid #000;
         padding: 10px;
-     " >
+     ">
             <img src="" alt="" id="AvPok2">
         </div>
     </div>
     <div id="footer"></div>
+
     <script src="js/script.js"></script>
-    <script> recuperePokemin(1,1)</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            manageLoginArea();
+            initCombat();
+        });
+        ;</script>
 </body>
+
 </html>

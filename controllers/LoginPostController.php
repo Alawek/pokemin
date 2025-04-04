@@ -53,11 +53,20 @@ class LoginPostController extends AbstractController implements IController
     {
         $compte = $this->service->getDao()->create($this->email, "", $this->password);
         $result = $this->service->login($compte);
-        if (! is_null($result)) {
+        if (!is_null($result)) {
             login($result);
-            $this->response = 1;
+            $this->response = [
+                'success' => true,
+                'idCompte' => $result->getIdCompte(),
+                'email' => $result->getEmail(),
+                'pseudo' => $result->getPseudo(),
+                'role' => $result->getRole()
+            ];
         } else {
-            $this->response = 0;
+            $this->response = [
+                'success' => false,
+                'message' => 'Identifiants incorrects.'
+            ];
         }
     }
 }

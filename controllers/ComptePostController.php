@@ -85,7 +85,7 @@ class ComptePostController extends AbstractController implements IController
             // var_dump($ex);
             headerCustom(498, "Business Error " . $ex->getCode() . " " . $ex->getMessage());
         } catch (Exception $ex) {
-            var_dump($ex);
+            error_log($ex);
         }
         // ???? sur les cas de tests ???
     }

@@ -55,111 +55,58 @@ class PokeminInstancePostController extends AbstractController implements IContr
 
     function checkCybersec()
     {
-        if (! ctype_digit($this->form['niveau'])) {
-            error_log("CYBERSEC Mauvais typage pour le niveau");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['experience'])) {
-            error_log("CYBERSEC Mauvais typage pour l'experience'");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['experienceMax'])) {
-            error_log("CYBERSEC Mauvais typage pour l'experiencemax");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['pv'])) {
-            error_log("CYBERSEC Mauvais typage pour les pv");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['pvMax'])) {
-            error_log("CYBERSEC Mauvais typage pour les pv max");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['mana'])) {
-            error_log("CYBERSEC Mauvais typage pour le mana");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['manaMax'])) {
-            error_log("CYBERSEC Mauvais typage pour le manaMax");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['agilite'])) {
-            error_log("CYBERSEC Mauvais typage pour l'agilite");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['chance'])) {
-            error_log("CYBERSEC Mauvais typage pour la chance");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['endurance'])) {
-            error_log("CYBERSEC Mauvais typage pour l'endurance");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['esprit'])) {
-            error_log("CYBERSEC Mauvais typage pour l'esprit");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['puissance'])) {
-            error_log("CYBERSEC Mauvais typage pour la puissance");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['intelligence'])) {
-            error_log("CYBERSEC Mauvais typage pour l'intelligence");
-            _400_Bad_Request();
-        }
-        if (! ctype_digit($this->form['idPokemin'])) {
-            error_log("CYBERSEC Mauvais typage pour l'id pokemin");
-            _400_Bad_Request();
-        }
-        
-       
-        if ((!preg_match('/^[a-zA-ZÀ-ÿ0-9 .,\'!?-]*$/', $this->form['nom']))) {
-            headerCustom(840, "Caracteres non autorises detectes.");
+        // Champs numériques obligatoires déjà présents (isset dans checkForm)
+        $intFields = [
+            'niveau', 'experience', 'experienceMax',
+            'pv', 'pvMax', 'mana', 'manaMax',
+            'agilite', 'chance', 'endurance',
+            'esprit', 'puissance', 'intelligence', 'idPokemin'
+        ];
+    
+        foreach ($intFields as $key) {
+            if (!ctype_digit($this->form[$key])) {
+                error_log("CYBERSEC Mauvais typage pour '$key'");
+                _400_Bad_Request();
+            }
+            $this->$key = intval($this->form[$key]);
         }
     
-
+        // Champ 'nom' : validation de caractères autorisés
+        if (!preg_match('/^[a-zA-ZÀ-ÿ0-9 .,\'!?-]*$/u', $this->form['nom'])) {
+            error_log("CYBERSEC caractères non autorisés dans le nom");
+            headerCustom(840, "Caractères non autorisés dans le champ 'nom'");
+        }
+    
         $this->nom = htmlspecialchars(trim($this->form['nom']), ENT_NOQUOTES, 'UTF-8');
-        $this->niveau = trim(intval($this->form['niveau']));
-        $this->experience = trim(intval($this->form['experience']));
-        $this->experienceMax = trim(intval($this->form['experienceMax']));
-        $this->pv = trim(intval($this->form['pv']));
-        $this->pvMax = trim(intval($this->form['pvMax']));
-        $this->mana = trim(intval($this->form['mana']));
-        $this->manaMax = trim(intval($this->form['manaMax']));
-        $this->agilite = trim(intval($this->form['agilite']));
-        $this->chance = trim(intval($this->form['chance']));
-        $this->endurance = trim(intval($this->form['endurance']));
-        $this->esprit = trim(intval($this->form['esprit']));
-        $this->puissance = trim(intval($this->form['puissance']));
-        $this->intelligence = trim(intval($this->form['intelligence']));
-        $this->sauvage = trim(boolval($this->form['sauvage']));
-        $this->idPokemin = trim(intval($this->form['idPokemin']));
-
-
-
-
-
-
-        if (isset($this->form['actif'])&& !empty($this->form['actif'])) {
-          
-            $this->actif = trim(boolval($this->form['actif']));
+    
+        // Champ booléen obligatoire : 'sauvage'
+        $this->sauvage = $this->form['sauvage'] === '1';
+    
+        // Champ facultatif : actif
+        if (isset($this->form['actif'])) {
+            $this->actif = $this->form['actif'] === '1';
         }
-        if (isset($this->form['idDresseur'])&& !empty($this->form['idDresseur'])) {
+    
+        // Champ facultatif : idDresseur
+        if (isset($this->form['idDresseur'])) {
             if (!ctype_digit($this->form['idDresseur'])) {
-                error_log("CYBERSEC mauvais typage pour l'id dresseur'");
+                error_log("CYBERSEC Mauvais typage pour idDresseur");
                 _400_Bad_Request();
             }
-            $this->idDresseur = trim(boolval($this->form['idDresseur']));
+            $this->idDresseur = intval($this->form['idDresseur']);
         }
-        if (isset($this->form['idPersonnage'])&& !empty($this->form['idPersonnage'])) {
+    
+        // Champ facultatif : idPersonnage
+        if (isset($this->form['idPersonnage']) && !empty($this->form['idPersonnage'])) {
             if (!ctype_digit($this->form['idPersonnage'])) {
-                error_log("CYBERSEC mauvais typage pour l'id du Personnage");
+                error_log("CYBERSEC Mauvais typage pour idPersonnage");
                 _400_Bad_Request();
             }
-            $this->idPersonnage = trim(boolval($this->form['idPersonnage']));
+            $this->idPersonnage = intval($this->form['idPersonnage']);
         }
         
     }
+    
 
 
     //TODO:

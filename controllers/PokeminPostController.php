@@ -131,7 +131,7 @@ class PokeminPostController extends AbstractController implements IController
     function checkRights()
     {
         
-        if (!isLogged()) {
+        if (!isLogged() || getRoleIdFromSession()<2) {
             _401_Unauthorized();
         }
     }

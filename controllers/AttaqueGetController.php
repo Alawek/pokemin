@@ -2,12 +2,12 @@
 require_once(ROOT . "/utils/IController.php");
 require_once(ROOT . "/utils/AbstractController.php");
 require_once(ROOT . "/utils/functions.php");
-require_once(ROOT . "/services/PokeminInstanceService.php");
+require_once(ROOT . "/services/AttaqueService.php");
 
-class PokeminInstanceGetController extends AbstractController implements IController
+class AttaqueGetController extends AbstractController implements IController
 {
 
-    private PokeminInstanceService $service;
+    private AttaqueService $service;
     private int $id;
 
     //construct
@@ -16,14 +16,14 @@ class PokeminInstanceGetController extends AbstractController implements IContro
     {
         //Appel du constructeur de la classe mère AbstractController
         parent::__construct($form, $controllerName);
-        $this->service = new PokeminInstanceService();
+        $this->service = new AttaqueService();
     }
     //Méthode
     function checkForm()
     {
         if (isset($this->form['id']) && !empty($this->form['id'])) {
             if(!$this->service->findById($this->form['id'])){
-                error_log("FORM  instance pokemin introuvable");
+                error_log("FORM Attaque introuvable");
                 _404_Not_Found();
             }
         }
@@ -59,11 +59,8 @@ class PokeminInstanceGetController extends AbstractController implements IContro
     function processRequest()
     {
         if (isset($this->form['id']) && !empty($this->form['id'])) {
-            error_log("📦 Requête get PokeminInstance pour ID = " . $this->form['id']);
             $this->response = $this->service->findById($this->id);
-        } else {
-            $this->response = $this->service->findAll();
         }
+        $this->response = $this->service->findAll();
     }
-    
 }

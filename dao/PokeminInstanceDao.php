@@ -113,7 +113,7 @@ class PokeminInstanceDao extends AbstractDao implements IDao
         $stmt->bindValue(':puissance', $pokeminInstance->getPuissance());
         $stmt->bindValue(':intelligence', $pokeminInstance->getIntelligence());
         $stmt->bindValue(':sauvage', $pokeminInstance->estSauvage());
-        $stmt->bindValue(':actif', $pokeminInstance->estActif() === null ? null : boolval($pokeminInstance->getActif())); // Gérer le cas nul
+        $stmt->bindValue(':actif', $pokeminInstance->estActif() === null ? null : boolval($pokeminInstance->estActif())); // Gérer le cas nul
         $stmt->bindValue(':id_pokemin', $pokeminInstance->getIdPokemin());
         $stmt->bindValue(':id_dresseur', $pokeminInstance->getIdDresseur() === null ? null : intval($pokeminInstance->getIdDresseur())); // Gérer le cas nul
         $stmt->bindValue(':id_personnage', $pokeminInstance->getIdPersonnage() === null ? null : intval($pokeminInstance->getIdPersonnage())); // Gérer le cas nul
@@ -133,6 +133,7 @@ class PokeminInstanceDao extends AbstractDao implements IDao
 
     function findById(int $id): ?PokeminInstance
     {
+        error_log("📡 DAO: Recherche PokeminInstance ID = " . $id);
         $stmt = $this->pdo->prepare("SELECT * FROM instance_pokemin instance  WHERE instance.id_instance = :id");
         $stmt->bindParam(':id', $id);
         $stmt->setFetchMode(PDO::FETCH_OBJ);
@@ -142,7 +143,7 @@ class PokeminInstanceDao extends AbstractDao implements IDao
             return NULL;
         }
 
-
+        error_log("✅ Pokemin trouvé avec id_instance = " . $row->id_instance);
         $pokemin = $this->createFromRow($row);
 
 
@@ -215,7 +216,7 @@ class PokeminInstanceDao extends AbstractDao implements IDao
         $stmt->bindValue(':puissance', $pokeminInstance->getPuissance(), PDO::PARAM_INT);
         $stmt->bindValue(':intelligence', $pokeminInstance->getIntelligence(), PDO::PARAM_INT);
         $stmt->bindValue(':sauvage', $pokeminInstance->getSauvage(), PDO::PARAM_BOOL);
-        $stmt->bindValue(':actif', $pokeminInstance->getActif() === null ? null : boolval($pokeminInstance->getActif()));
+        $stmt->bindValue(':actif', $pokeminInstance->estActif() === null ? null : boolval($pokeminInstance->getActif()));
         $stmt->bindValue(':id_pokemin', $pokeminInstance->getIdPokemin(), PDO::PARAM_INT);
         $stmt->bindValue(':id_dresseur', $pokeminInstance->getIdDresseur() === null ? null : $pokeminInstance->getIdDresseur(), PDO::PARAM_INT);
         $stmt->bindValue(':id_personnage', $pokeminInstance->getIdPersonnage() === null ? null : $pokeminInstance->getIdPersonnage(), PDO::PARAM_INT);

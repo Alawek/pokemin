@@ -3,24 +3,24 @@
 require_once(ROOT . "/utils/IService.php");
 require_once(ROOT . "/utils/AbstractService.php");
 require_once(ROOT . "/utils/IDao.php");
-require_once(ROOT . "/dao/CompteDao.php");
-require_once(ROOT . "/model/Compte.php");
+require_once(ROOT . "/dao/AttaqueDao.php");
+require_once(ROOT . "/model/Attaque.php");
 //______REQUIRE_______________________________________________________________________________________________________________________________________________________________
 
 
 
-class CompteService extends AbstractService implements IService
+class AttaqueService extends AbstractService implements IService
 {
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
 
-    private CompteDao $dao;
+    private AttaqueDao $dao;
 
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
     //______CONSTRUCTEUR_______________________________________________________________________________________________________________________________________________________________
 
     function __construct()
     {
-        $this->dao = new CompteDao();
+        $this->dao = new AttaqueDao();
     }
     //______CONSTRUCTEUR_______________________________________________________________________________________________________________________________________________________________
 
@@ -33,11 +33,12 @@ class CompteService extends AbstractService implements IService
 
     function insert(IEntity $c)
     {
+        //Code métier, un compte est forcément un rédacteur
         return $this->dao->insert($c);
     }
 
 
-    public function findById(int $id): ?Compte
+    public function findById(int $id): ?Attaque
     {
         return $this->dao->findById($id);
     }
@@ -46,21 +47,11 @@ class CompteService extends AbstractService implements IService
         return $this->dao->delete($id);
     }
 
-
-    function login($compte)
-    {
-        return $this->dao->login($compte);
+    public function update(IEntity $Attaque){
+        return $this->dao->update($Attaque);
     }
 
-    function emailIsAlready($email)
-    {
-        return $this->dao->emailIsAlready($email);
-    }
-
-    function pseudoIsAlready($pseudo)
-    {
-        return $this->dao->pseudoIsAlready($pseudo);
-    }
+    
     //______METHODE_______________________________________________________________________________________________________________________________________________________________
 
 }

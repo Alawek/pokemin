@@ -3,24 +3,24 @@
 require_once(ROOT . "/utils/IService.php");
 require_once(ROOT . "/utils/AbstractService.php");
 require_once(ROOT . "/utils/IDao.php");
-require_once(ROOT . "/dao/CompteDao.php");
-require_once(ROOT . "/model/Compte.php");
+require_once(ROOT . "/dao/AttaquePokeminDao.php");
+require_once(ROOT . "/model/AttaquePokemin.php");
 //______REQUIRE_______________________________________________________________________________________________________________________________________________________________
 
 
 
-class CompteService extends AbstractService implements IService
+class AttaquePokeminService extends AbstractService implements IService
 {
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
 
-    private CompteDao $dao;
+    private AttaquePokeminDao $dao;
 
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
     //______CONSTRUCTEUR_______________________________________________________________________________________________________________________________________________________________
 
     function __construct()
     {
-        $this->dao = new CompteDao();
+        $this->dao = new AttaquePokeminDao();
     }
     //______CONSTRUCTEUR_______________________________________________________________________________________________________________________________________________________________
 
@@ -33,34 +33,40 @@ class CompteService extends AbstractService implements IService
 
     function insert(IEntity $c)
     {
+        //Code métier, un compte est forcément un rédacteur
         return $this->dao->insert($c);
     }
 
 
-    public function findById(int $id): ?Compte
+    public function findById(int $idAttaque): ?AttaquePokemin
     {
-        return $this->dao->findById($id);
+        return $this->dao->findById($idAttaque);
     }
 
-    public function delete(int $id){
-        return $this->dao->delete($id);
+    public function findAllByInstance(int $idInstance): array {
+        return $this->dao->findAllByInstance($idInstance);
     }
-
-
-    function login($compte)
+    
+    function findAttaque(int $idAttaque, int $idInstance): ?AttaquePokemin
     {
-        return $this->dao->login($compte);
+        return $this->dao->findAttaque($idAttaque,$idInstance);
+    }
+    
+
+    public function delete(int $idAttaque,){
+        return $this->dao->delete($idAttaque);
     }
 
-    function emailIsAlready($email)
-    {
-        return $this->dao->emailIsAlready($email);
+    public function update(IEntity $attaquePokemin){
+        return $this->dao->update($attaquePokemin);
     }
 
-    function pseudoIsAlready($pseudo)
+    function deleteAttaque(int $idAttaque, int $idInstance)
     {
-        return $this->dao->pseudoIsAlready($pseudo);
+        return $this->dao->deleteAttaque($idAttaque,$idInstance);
     }
+
+    
     //______METHODE_______________________________________________________________________________________________________________________________________________________________
 
 }
