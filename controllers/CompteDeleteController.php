@@ -43,7 +43,7 @@ class CompteDeleteController extends AbstractController implements IController{
 
     function checkRights(){
         error_log($this->controllerName . "->" . __FUNCTION__);
-        if(!isLogged()){
+        if(!isLogged() || getRoleIdFromSession()<2){
             _401_Unauthorized();
         }
         if($this->id != getCompteIdFromSession() && getRoleIdFromSession()<2){

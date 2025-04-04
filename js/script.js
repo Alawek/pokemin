@@ -54,7 +54,7 @@ function createA(textContent, callback) {
 //DOM-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 function recuperePokemin(idP,affichePokemin) {
-    myFetch(null, affichePokemin, 'index.php?route=Animal&pokemin=' + idP, 'GET');
+    myFetch(null, affichePokemin, 'index.php?route=pokemin&id=' + idP, 'GET');
 }
 
 function recupereAttaque(idP,idA,idPd){
