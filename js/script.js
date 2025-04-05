@@ -348,29 +348,30 @@ function affichePokemin1(data) {
     mainDiv.innerHTML = "";
     mainDiv.appendChild(createH1("Nom du Pokemin : " + data.nom));
     mainDiv.appendChild(createP("Niveau : " + data.niveau));
-    mainDiv.appendChild(createP("Type du pokemin : " + data.idPokemin));
+    mainDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.idType1));
     mainDiv.appendChild(createP("PV du pokemin : " + data.pv + "/" + data.pvMax + " PV"));
     mainDiv.appendChild(createP("Mana : " + data.mana + "/" + data.manaMax + " mana"));
     const divAttaques = document.createElement('div');
     divAttaques.id = "boutons-attaque";
     mainDiv.appendChild(divAttaques);
+    recupereAttaque(data.idInstance);
 
 
 }
 
 
 function affichePokemin2(data) {
+    console.log(data);
     const secDiv = document.getElementById('pokemin2');
     secDiv.innerHTML = "";
-   secDiv.appendChild(createH1("Nom du Pokemin : " + data.nom));
+    secDiv.appendChild(createH1("Nom du Pokemin : " + data.nom));
     secDiv.appendChild(createP("Niveau : " + data.niveau));
-    secDiv.appendChild(createP("Type du pokemin : " + data.idPokemin));
+    secDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.idType1));
     secDiv.appendChild(createP("PV du pokemin : " + data.pv + "/" + data.pvMax + " PV"));
     secDiv.appendChild(createP("Mana : " + data.mana + "/" + data.manaMax + " mana"));
     // mainDiv.appendChild(createP("Attaque 1 : " + data.Attaque1 + " degat de l'attaque " + data.degat + " PV"));
     // mainDiv.appendChild(createP("Attaque 2 : " + data.Attaque2 + " degat de l'attaque " + data.degat2 + " PV"));
     // mainDiv.appendChild(createP("Attaque soin : " + data.Attaque3 + " soin : " + data.soin + " PV"));
-
 
 
 }
@@ -384,22 +385,90 @@ function afficherBoutonsAttaque(attaques) {
         const bouton = document.createElement('button');
         bouton.textContent = attaque.attaque.nom + " (" + attaque.mana + " mana)";
         bouton.addEventListener('click', () => {
-            // executerAttaque(attaque, 2); // ID du pokemin cible
+            executerAttaque(attaque, 4); // ID du pokemin cible
         });
         divAttaques.appendChild(bouton);
     });
 }
 
+function executerAttaque(attaque, cibleId) {
+    const lanceur = attaque.pokeminInstance;
+    const coutMana = attaque.mana;
+    const degats = attaque.attaque.degat;
+    const modif = attaque.pokeminInstance.intelligence;
+
+    if (lanceur.mana < coutMana) {
+        alert(`${lanceur.nom} n'a pas assez de mana pour utiliser ${attaque.attaque.nom} !`);
+        return;
+    }
+
+    // Calcul en local
+    const nouveauMana = lanceur.mana - coutMana;
+
+    myFetch(null, function (cible) {
+        const valeurDegats = Math.round(degats * (1 + modif / 10));
+        const nouveauPv = Math.max(0, cible.pv - valeurDegats);
+        console.log(`🧮 Dégâts infligés : ${valeurDegats}`);
+
+
+        // Création du formulaire à envoyer au serveur
+        const form = new FormData();
+        form.append("route", "MajCbt");
+        form.append("idLanceur", lanceur.idInstance);
+        form.append("manaRestant", nouveauMana);
+        form.append("idCible", cible.idInstance);
+        form.append("pvRestant", nouveauPv);
+
+        myFetch(form, function () {
+            // Une fois la mise à jour effectuée côté serveur, on recharge les données
+            recuperePokemin(lanceur.idInstance);
+            recuperePokemin2(cible.idInstance);
+            recupereAttaque(lanceur.idInstance);
+        }, "index.php", "POST");
+    }, 'index.php?route=pokemininstance&id=' + cibleId, 'GET');
+}
+
+function soignerPokemin(idInstance) {
+    myFetch(null, function (pokemin) {
+        // Met les PV et Mana à leur maximum
+        pokemin.pv = pokemin.pvMax;
+        pokemin.mana = pokemin.manaMax;
+
+        // Re-envoie les nouvelles valeurs au serveur
+        const form = new FormData();
+        form.append("route", "MajCbt");
+        form.append("idLanceur", pokemin.idInstance);
+        form.append("manaRestant", pokemin.mana);
+        form.append("idCible", pokemin.idInstance); // On cible soi-même
+        form.append("pvRestant", pokemin.pv);
+
+        myFetch(form, function () {
+            // Recharge les données à jour
+            recuperePokemin(pokemin.idInstance);
+            alert(`${pokemin.nom} a été soigné !`);
+        }, "index.php", "POST");
+    }, "index.php?route=pokemininstance&id=" + idInstance, "GET");
+}
+
+
+
 function initCombat(idPokemin1 = 1, idPokemin2 = 4) {
     myFetch(null, function (data) {
         if (data.isLogged) {
 
-            recuperePokemin(idPokemin1);            
+            recuperePokemin(idPokemin1);
             recupereAttaque(idPokemin1);
             recuperePokemin2(idPokemin2);
             afficherUtilisateurConnecte(); // Affiche le pseudo
-            manageLoginArea()           
-             console.log("✅ Utilisateur connecté, initialisation du combat..." + recuperePokemin2(3));
+            const healBtn = createButton('button', 'Soigner les Pokemin');
+            healBtn.addEventListener('click', () => {
+                soignerPokemin(1); // ou remplace par idPokemin1
+                soignerPokemin(4); // ou remplace par idPokemin2
+            });
+            document.getElementById('user-info').appendChild(healBtn);
+
+            manageLoginArea()
+            console.log("✅ Utilisateur connecté, initialisation du combat...");
 
         } else {
             manageLoginArea()
@@ -417,8 +486,3 @@ function initCombat(idPokemin1 = 1, idPokemin2 = 4) {
 
 // Pokemin__________________________________________________________________________________________________________________________________________________________________________________
 
-
-//exemple de create a
-// mainDiv.appendChild(createA("Utilisé Attaque 1", function (event) {
-//     recuperePokemin(3,affichePokemin1);
-// }));

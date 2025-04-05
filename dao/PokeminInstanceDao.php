@@ -183,11 +183,11 @@ class PokeminInstanceDao extends AbstractDao implements IDao
                                         nom = :nom,
                                         niveau = :niveau,
                                         experience = :experience,
-                                        experience_max = :experiencemax,
+                                        experiencemax = :experiencemax,
                                         pv = :pv,
-                                        pv_max = :pvmax,
+                                        pvmax = :pvmax,
                                         mana = :mana,
-                                        mana_max = :manamax,
+                                        manamax = :manamax,
                                         agilite = :agilite,
                                         chance = :chance,
                                         endurance = :endurance,
@@ -204,19 +204,19 @@ class PokeminInstanceDao extends AbstractDao implements IDao
         $stmt->bindValue(':nom', $pokeminInstance->getNom());
         $stmt->bindValue(':niveau', $pokeminInstance->getNiveau(), PDO::PARAM_INT);
         $stmt->bindValue(':experience', $pokeminInstance->getExperience(), PDO::PARAM_INT);
-        $stmt->bindValue(':experience_max', $pokeminInstance->getExperienceMax(), PDO::PARAM_INT);
+        $stmt->bindValue(':experiencemax', $pokeminInstance->getExperienceMax(), PDO::PARAM_INT);
         $stmt->bindValue(':pv', $pokeminInstance->getPv(), PDO::PARAM_INT);
-        $stmt->bindValue(':pv_max', $pokeminInstance->getPvMax(), PDO::PARAM_INT);
+        $stmt->bindValue(':pvmax', $pokeminInstance->getPvMax(), PDO::PARAM_INT);
         $stmt->bindValue(':mana', $pokeminInstance->getMana(), PDO::PARAM_INT);
-        $stmt->bindValue(':mana_max', $pokeminInstance->getManaMax(), PDO::PARAM_INT);
+        $stmt->bindValue(':manamax', $pokeminInstance->getManaMax(), PDO::PARAM_INT);
         $stmt->bindValue(':agilite', $pokeminInstance->getAgilite(), PDO::PARAM_INT);
         $stmt->bindValue(':chance', $pokeminInstance->getChance(), PDO::PARAM_INT);
         $stmt->bindValue(':endurance', $pokeminInstance->getEndurance(), PDO::PARAM_INT);
         $stmt->bindValue(':esprit', $pokeminInstance->getEsprit(), PDO::PARAM_INT);
         $stmt->bindValue(':puissance', $pokeminInstance->getPuissance(), PDO::PARAM_INT);
         $stmt->bindValue(':intelligence', $pokeminInstance->getIntelligence(), PDO::PARAM_INT);
-        $stmt->bindValue(':sauvage', $pokeminInstance->getSauvage(), PDO::PARAM_BOOL);
-        $stmt->bindValue(':actif', $pokeminInstance->estActif() === null ? null : boolval($pokeminInstance->getActif()));
+        $stmt->bindValue(':sauvage', $pokeminInstance->estSauvage(), PDO::PARAM_BOOL);
+        $stmt->bindValue(':actif', $pokeminInstance->estActif() === null ? null : boolval($pokeminInstance->estActif()));
         $stmt->bindValue(':id_pokemin', $pokeminInstance->getIdPokemin(), PDO::PARAM_INT);
         $stmt->bindValue(':id_dresseur', $pokeminInstance->getIdDresseur() === null ? null : $pokeminInstance->getIdDresseur(), PDO::PARAM_INT);
         $stmt->bindValue(':id_personnage', $pokeminInstance->getIdPersonnage() === null ? null : $pokeminInstance->getIdPersonnage(), PDO::PARAM_INT);
