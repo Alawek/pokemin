@@ -327,12 +327,12 @@ function afficherUtilisateurConnecte() {
 // Connexion/Deconnexion__________________________________________________________________________________________________________________________________________________________________
 // Pokemin________________________________________________________________________________________________________________________________________________________
 function recuperePokemin(idP) {
-    myFetch(null, affichePokemin1, 'index.php?route=pokemininstance&id=' + idP, 'GET');
+    myFetch(null, affichePokemin1, 'index.php?route=PokeminInstance&id=' + idP, 'GET');
 
 }
 
 function recuperePokemin2(idP) {
-    myFetch(null, affichePokemin2, 'index.php?route=pokemininstance&id=' + idP, 'GET');
+    myFetch(null, affichePokemin2, 'index.php?route=PokeminInstance&id=' + idP, 'GET');
 
 }
 
@@ -402,16 +402,14 @@ function executerAttaque(attaque, cibleId) {
         return;
     }
 
-    // Calcul en local
     const nouveauMana = lanceur.mana - coutMana;
 
     myFetch(null, function (cible) {
         const valeurDegats = Math.round(degats * (1 + modif / 10));
         const nouveauPv = Math.max(0, cible.pv - valeurDegats);
-        console.log(`🧮 Dégâts infligés : ${valeurDegats}`);
 
+        console.log(`🧮 Dégâts infligés à ${cible.nom} : ${valeurDegats}, PV restants : ${nouveauPv}`);
 
-        // Création du formulaire à envoyer au serveur
         const form = new FormData();
         form.append("route", "MajCbt");
         form.append("idLanceur", lanceur.idInstance);
@@ -420,35 +418,88 @@ function executerAttaque(attaque, cibleId) {
         form.append("pvRestant", nouveauPv);
 
         myFetch(form, function () {
-            // Une fois la mise à jour effectuée côté serveur, on recharge les données
             recuperePokemin(lanceur.idInstance);
             recuperePokemin2(cible.idInstance);
             recupereAttaque(lanceur.idInstance);
+
+            // KO ?
+            if (nouveauPv === 0) {
+                setTimeout(() => alert(`${cible.nom} est KO ! ${lanceur.nom} a gagné !`), 100);
+                soignerPokemin(lanceur.idInstance);
+                soignerPokemin(cible.idInstance);
+                return;
+            }
+
+            //  Contre-attaque de la cible
+            myFetch(null, function (attaquesCible) {
+                const attaqueRiposte = attaquesCible[Math.floor(Math.random() * attaquesCible.length)];
+                console.log("fergregeggergg" + attaqueRiposte)
+                if (!attaqueRiposte) return;
+
+                const coutManaRiposte = attaqueRiposte.mana;
+                const degatsRiposte = attaqueRiposte.attaque.degat;
+                const modifRiposte = cible.intelligence;
+                const manaRestantCible = cible.mana - coutManaRiposte;
+
+                if (manaRestantCible < 0) {
+                    console.log(`${cible.nom} n'a pas assez de mana pour riposter.`);
+                    return;
+                }
+
+                const degatsInfliges = Math.round(degatsRiposte * (1 + modifRiposte / 10));
+                const pvRestantLanceur = Math.max(0, lanceur.pv - degatsInfliges);
+
+                const riposteForm = new FormData();
+                riposteForm.append("route", "MajCbt");
+                riposteForm.append("idLanceur", cible.idInstance);
+                riposteForm.append("manaRestant", manaRestantCible);
+                riposteForm.append("idCible", lanceur.idInstance);
+                riposteForm.append("pvRestant", pvRestantLanceur);
+                alert(`${cible.nom} a utilisé ${attaqueRiposte.attaque.nom} sur ${lanceur.nom} et lui a infligé ${degatsInfliges} dégats !`);
+
+                myFetch(riposteForm, function () {
+                    recuperePokemin(lanceur.idInstance);
+                    recuperePokemin2(cible.idInstance);
+                    recupereAttaque(cible.idInstance);
+
+                    if (pvRestantLanceur === 0) {
+                        setTimeout(() => alert(`${lanceur.nom} est KO ! ${cible.nom} a riposté avec succès !`), 100);
+                        soignerPokemin(lanceur.idInstance);
+                        soignerPokemin(cible.idInstance);
+                        return;
+                    }
+                }, "index.php", "POST");
+
+            }, 'index.php?route=AttaquePokemin&idInstance=' + cible.idInstance, 'GET');
+
         }, "index.php", "POST");
-    }, 'index.php?route=pokemininstance&id=' + cibleId, 'GET');
+
+    }, 'index.php?route=PokeminInstance&id=' + cibleId, 'GET');
 }
 
 function soignerPokemin(idInstance) {
     myFetch(null, function (pokemin) {
-        // Met les PV et Mana à leur maximum
         pokemin.pv = pokemin.pvMax;
         pokemin.mana = pokemin.manaMax;
 
-        // Re-envoie les nouvelles valeurs au serveur
         const form = new FormData();
         form.append("route", "MajCbt");
         form.append("idLanceur", pokemin.idInstance);
         form.append("manaRestant", pokemin.mana);
-        form.append("idCible", pokemin.idInstance); // On cible soi-même
+        form.append("idCible", pokemin.idInstance);
         form.append("pvRestant", pokemin.pv);
 
         myFetch(form, function () {
-            // Recharge les données à jour
-            recuperePokemin(pokemin.idInstance);
+            if (pokemin.idInstance === 1) {
+                recuperePokemin(pokemin.idInstance);
+            } else {
+                recuperePokemin2(pokemin.idInstance);
+            }
             alert(`${pokemin.nom} a été soigné !`);
         }, "index.php", "POST");
     }, "index.php?route=pokemininstance&id=" + idInstance, "GET");
 }
+
 
 
 
@@ -465,6 +516,7 @@ function initCombat(idPokemin1 = 1, idPokemin2 = 4) {
                 soignerPokemin(1); // ou remplace par idPokemin1
                 soignerPokemin(4); // ou remplace par idPokemin2
             });
+
             document.getElementById('user-info').appendChild(healBtn);
 
             manageLoginArea()
