@@ -497,7 +497,7 @@ function soignerPokemin(idInstance) {
             }
             alert(`${pokemin.nom} a été soigné !`);
         }, "index.php", "POST");
-    }, "index.php?route=pokemininstance&id=" + idInstance, "GET");
+    }, "index.php?route=PokeminInstance&id=" + idInstance, "GET");
 }
 
 
