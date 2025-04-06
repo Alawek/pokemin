@@ -81,10 +81,13 @@ function createList(arraylist, idElement = null) {
 
 }
 
-function createButton(type, text) {
+function createButton(type, text, onclick = null) {
     const button = document.createElement('button');
     button.type = type;
     button.textContent = text;
+    if (onclick !== null) {
+        button.onclick = onclick
+    }
     return button;
 }
 
@@ -307,11 +310,11 @@ function afficheLoginZone(sessionInfo) {
     const loginArea = document.getElementById('loginArea');
     loginArea.innerHTML = '';
     if (sessionInfo.isLogged) {
-        loginArea.appendChild(createA('Logout', doLogout));
+        loginArea.appendChild(createButton('button', 'Logout', doLogout));
 
     } else {
-        loginArea.appendChild(createA('Login', doLogin));
-        loginArea.appendChild(createA("S'inscrire", doRegister));
+        loginArea.appendChild(createButton('button', 'Login', doLogin));
+        loginArea.appendChild(createButton('button', "S'inscrire", doRegister));
     }
 }
 
@@ -348,11 +351,14 @@ function affichePokemin1(data) {
     mainDiv.innerHTML = "";
     mainDiv.appendChild(createH1("Nom du Pokemin : " + data.nom));
     mainDiv.appendChild(createP("Niveau : " + data.niveau));
-    mainDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.idType1));
+    mainDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.type1.nom));
     mainDiv.appendChild(createP("PV du pokemin : " + data.pv + "/" + data.pvMax + " PV"));
     mainDiv.appendChild(createP("Mana : " + data.mana + "/" + data.manaMax + " mana"));
     const divAttaques = document.createElement('div');
     divAttaques.id = "boutons-attaque";
+    divAttaques.style.display = "flex";
+    divAttaques.style.gap = "8%";
+
     mainDiv.appendChild(divAttaques);
     recupereAttaque(data.idInstance);
 
@@ -366,7 +372,7 @@ function affichePokemin2(data) {
     secDiv.innerHTML = "";
     secDiv.appendChild(createH1("Nom du Pokemin : " + data.nom));
     secDiv.appendChild(createP("Niveau : " + data.niveau));
-    secDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.idType1));
+    secDiv.appendChild(createP("Type du pokemin : " + data.pokeminBase.type1.nom));
     secDiv.appendChild(createP("PV du pokemin : " + data.pv + "/" + data.pvMax + " PV"));
     secDiv.appendChild(createP("Mana : " + data.mana + "/" + data.manaMax + " mana"));
     // mainDiv.appendChild(createP("Attaque 1 : " + data.Attaque1 + " degat de l'attaque " + data.degat + " PV"));
@@ -382,13 +388,13 @@ function afficherBoutonsAttaque(attaques) {
     divAttaques.innerHTML = "";
 
     attaques.forEach(attaque => {
-        const bouton = document.createElement('button');
-        bouton.textContent = attaque.attaque.nom + " (" + attaque.mana + " mana)";
-        bouton.addEventListener('click', () => {
+        const texte = attaque.attaque.nom + " (" + attaque.attaque.degat + "dégats | " + attaque.mana + " mana)";
+        const bouton = createButton('button', texte, () => {
             executerAttaque(attaque, 4); // ID du pokemin cible
         });
         divAttaques.appendChild(bouton);
     });
+
 }
 
 function executerAttaque(attaque, cibleId) {

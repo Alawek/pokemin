@@ -8,6 +8,8 @@ require_once(ROOT . "/model/Pokemin.php");
 require_once(ROOT . "/utils/exceptions.php");
 require_once(ROOT . "/utils/functions.php");
 require_once(ROOT . "/exceptions/ConstraintUniqueException.php");
+require_once(ROOT . "/dao/TypeDao.php");
+
 //______REQUIRE_______________________________________________________________________________________________________________________________________________________________
 
 
@@ -17,6 +19,7 @@ class PokeminDao extends AbstractDao implements IDao
 
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
     private $pdo;
+    private TypeDao $typeDao;
 
     //______ATTRIBUT_______________________________________________________________________________________________________________________________________________________________
 
@@ -25,6 +28,7 @@ class PokeminDao extends AbstractDao implements IDao
     function __construct()
     {
         $this->pdo = BddSingleton::getInstance()->getPDO();
+        $this->typeDao=new TypeDao;
     }
     //______CONSTRUCTEUR_______________________________________________________________________________________________________________________________________________________________
     //______METHODE/REQUETE SQL_______________________________________________________________________________________________________________________________________________________________
@@ -44,7 +48,10 @@ class PokeminDao extends AbstractDao implements IDao
         $pokemin->setTauxCapture($row->taux_capture);
         $pokemin->setIdDon($row->id_don);
         $pokemin->setIdType1($row->id_type);
+        $pokemin->setType1($this->typeDao->findById($row->id_type));
         $pokemin->setIdType2($row->id_type2);
+        $pokemin->setType2($this->typeDao->findById($row->id_type));
+
 
         return $pokemin;
     }
@@ -63,7 +70,10 @@ class PokeminDao extends AbstractDao implements IDao
         $pokemin->setTauxCapture($tauxcapture);
         $pokemin->setIdDon($don);
         $pokemin->setIdType1($type1);
+        $pokemin->setType1($this->typeDao->findById($type1));
         $pokemin->setIdType2($type2);
+        $pokemin->setType2($this->typeDao->findById($type2));
+
         return $pokemin;
     }
 
