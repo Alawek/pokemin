@@ -93,6 +93,8 @@ function createButton(type, text, onclick = null) {
 
 function prepareModal() {
     document.getElementById('myModal').style.display = "block";
+    document.getElementById('close').style.display = "flex";
+
     const container = document.getElementById('modalFormContainer');
     container.innerHTML = ''; // Conchita Martinez, fée du logis
     return container;
@@ -236,7 +238,7 @@ function doLogin() {
     form.appendChild(createInput('text', 'email', 'Email', null, "emailInput"));
     form.appendChild(createInput('password', 'pwd', 'Mot de passe', null, "pwdInput"));
     form.appendChild(createInput('hidden', 'route', null, 'Login'));
-    form.appendChild(createButton('submit', 'Se connecter'));
+    form.appendChild(createButton('submit', 'Envoyer'));
 
     // Gestion de la soumission du formulaire
     form.addEventListener('submit', function (event) {
@@ -310,11 +312,14 @@ function afficheLoginZone(sessionInfo) {
     const loginArea = document.getElementById('loginArea');
     loginArea.innerHTML = '';
     if (sessionInfo.isLogged) {
-        loginArea.appendChild(createButton('button', 'Logout', doLogout));
-
+        loginArea.appendChild(createButton('button', 'Se déconnecter', doLogout));
+        document.getElementById('pokemin1').style.display = "block";
+        document.getElementById('pokemin2').style.display = "block";
     } else {
-        loginArea.appendChild(createButton('button', 'Login', doLogin));
+        loginArea.appendChild(createButton('button', 'Se connecter', doLogin));
         loginArea.appendChild(createButton('button', "S'inscrire", doRegister));
+        document.getElementById('pokemin1').style.display = "none";
+        document.getElementById('pokemin2').style.display = "none";
     }
 }
 

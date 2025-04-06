@@ -4,37 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="favicon_pokemin_32x32.png">
     <title>Pokemin:Pas Online du tout</title>
+    <link rel="icon" type="image/png" href="favicon_pokemin_32x32.png">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <div id="header" style="display: flex; justify-content: space-evenly;">
-
-        <div id="user-info" style="display: flex; gap: 8%;"></div>
-        <!-- Fenêtre modale -->
-        <div id="myModal" class="modal" onclick="closeModal()">
-            <div class="modal-content" onclick="event.stopPropagation()">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <div id="modalFormContainer"></div>
+    <div id="header" style="display: grid;grid-template-rows: auto auto;">
+        <div style="display:flex; justify-content:end">
+            <!-- Fenêtre modale -->
+            <div id="myModal" class="modal" display="none">
+                <div class="modal-content" onclick="event.stopPropagation()">
+                    <span id="close" onclick="closeModal()">X</span>
+                    <div id="modalFormContainer"></div>
+                </div>
             </div>
+            <h1 class="pokemon-font">PoKeMiN</h1>
+            <div id="loginArea"></div>
         </div>
-        <div id="loginArea" style="display: flex; gap: 8%;"></div>
+        <div style="display: flex; ">
+            <div id="user-info" style="display: flex; gap: 10px; margin-bottom: 10px;"></div>
+        </div>
     </div>
     <div id="main" style="display: flex;gap: 10px;">
-        <div id="pokemin1" style="flex: 1; /* Les div prennent la même largeur */
-        border: 1px solid #000;
-        padding: 10px;
-     ">
-
-
+        <div id="pokemin1" style=" flex: 1;border: 1px solid #000;padding: 10px; background-color: rgba(255, 255, 255, 0.9);">
         </div>
-        <div id="ecran"></div>
-        <div id="pokemin2" style="flex: 1; /* Les div prennent la même largeur */
-        border: 1px solid #000;
-        padding: 10px;
-     ">
-            <img src="" alt="" id="AvPok2">
+        <div id="pokemin2" style="flex: 1;border: 1px solid #000;padding: 10px;background-color: rgba(255, 255, 255, 0.9);">
         </div>
     </div>
     <div id="footer"></div>
@@ -45,7 +40,7 @@
             manageLoginArea();
             initCombat();
         });
-        ;</script>
+    </script>
 </body>
 
 </html>
