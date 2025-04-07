@@ -143,7 +143,7 @@ class PokeminInstanceDao extends AbstractDao implements IDao
             return NULL;
         }
 
-        error_log("✅ Pokemin trouvé avec id_instance = " . $row->id_instance);
+        error_log(" Pokemin trouvé avec id_instance = " . $row->id_instance);
         $pokemin = $this->createFromRow($row);
 
 

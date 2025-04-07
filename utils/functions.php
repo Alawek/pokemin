@@ -101,3 +101,4 @@ function hashedPassword(string $str)
 {
     return password_hash($str, PASSWORD_BCRYPT);
 }
+

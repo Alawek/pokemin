@@ -334,10 +334,7 @@ function afficherUtilisateurConnecte() {
 
 // Connexion/Deconnexion__________________________________________________________________________________________________________________________________________________________________
 // Pokemin________________________________________________________________________________________________________________________________________________________
-function recuperePokemin(idP) {
-    myFetch(null, affichePokemin1, 'index.php?route=PokeminInstance&id=' + idP, 'GET');
 
-}
 
 function recuperePokemin2(idP) {
     myFetch(null, affichePokemin2, 'index.php?route=PokeminInstance&id=' + idP, 'GET');
@@ -350,7 +347,9 @@ function recupereAttaque(idInstance) {
 
 
 
-
+function recuperePokemin(idP) {
+    myFetch(null, affichePokemin1, 'index.php?route=PokeminInstance&id=' + idP, 'GET');
+}
 function affichePokemin1(data) {
     const mainDiv = document.getElementById('pokemin1');
     mainDiv.innerHTML = "";
@@ -363,11 +362,8 @@ function affichePokemin1(data) {
     divAttaques.id = "boutons-attaque";
     divAttaques.style.display = "flex";
     divAttaques.style.gap = "8%";
-
     mainDiv.appendChild(divAttaques);
     recupereAttaque(data.idInstance);
-
-
 }
 
 
@@ -388,7 +384,7 @@ function affichePokemin2(data) {
 }
 
 function afficherBoutonsAttaque(attaques) {
-    console.log("🎯 Attaques reçues :", attaques);
+    console.log(" Attaques reçues :", attaques);
     const divAttaques = document.getElementById('boutons-attaque');
     divAttaques.innerHTML = "";
 
@@ -419,7 +415,7 @@ function executerAttaque(attaque, cibleId) {
         const valeurDegats = Math.round(degats * (1 + modif / 10));
         const nouveauPv = Math.max(0, cible.pv - valeurDegats);
 
-        console.log(`🧮 Dégâts infligés à ${cible.nom} : ${valeurDegats}, PV restants : ${nouveauPv}`);
+        console.log(` Dégâts infligés à ${cible.nom} : ${valeurDegats}, PV restants : ${nouveauPv}`);
 
         const form = new FormData();
         form.append("route", "MajCbt");
@@ -535,7 +531,7 @@ function initCombat(idPokemin1 = 1, idPokemin2 = 4) {
 
         } else {
             manageLoginArea()
-            console.warn("⚠️ Utilisateur non connecté.");
+            console.warn(" Utilisateur non connecté.");
             const mainDiv = document.getElementById('pokemin1');
             const secDiv = document.getElementById('pokemin2');
             const sessionDiv = document.getElementById("user-info");

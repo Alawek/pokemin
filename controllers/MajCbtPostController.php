@@ -7,7 +7,7 @@ require_once(ROOT . "/utils/session.php");
 
 class MajCbtPostController extends AbstractController implements IController
 {
-    private PokeminInstanceService $pokeminService;
+    private PokeminInstanceService $pokeminInstanceService;
     private int $idLanceur;
     private int $manaRestant;
     private int $idCible;
@@ -16,7 +16,7 @@ class MajCbtPostController extends AbstractController implements IController
     public function __construct($form, $controllerName)
     {
         parent::__construct($form, $controllerName);
-        $this->pokeminService = new PokeminInstanceService();
+        $this->pokeminInstanceService = new PokeminInstanceService();
     }
 
     function checkForm()
@@ -44,30 +44,29 @@ class MajCbtPostController extends AbstractController implements IController
 
     function checkRights()
     {
-        // à adapter si besoin de vérifier que l'utilisateur contrôle bien le lanceur
     }
 
     function processRequest()
     {
         try {
-            $lanceur = $this->pokeminService->findById($this->idLanceur);
-            $cible = $this->pokeminService->findById($this->idCible);
+            $lanceur = $this->pokeminInstanceService->findById($this->idLanceur);
+            $cible = $this->pokeminInstanceService->findById($this->idCible);
     
             if ($this->idLanceur === $this->idCible) {
                 // Soin : on met à jour mana ET pv pour le même Pokemin
                 $lanceur->setMana($this->manaRestant);
                 $lanceur->setPv($this->pvRestant);
-                $this->pokeminService->update($lanceur);
+                $this->pokeminInstanceService->update($lanceur);
             } else {
                 $lanceur->setMana($this->manaRestant);
                 $cible->setPv($this->pvRestant);
-                $this->pokeminService->update($lanceur);
-                $this->pokeminService->update($cible);
+                $this->pokeminInstanceService->update($lanceur);
+                $this->pokeminInstanceService->update($cible);
             }
     
             $this->response = ["success" => true, "message" => "Combat mis à jour"];
         } catch (Exception $ex) {
-            error_log("❌ Erreur MajCbtPostController : " . $ex->getMessage());
+            error_log(" Erreur MajCbtPostController : " . $ex->getMessage());
             $this->response = ["success" => false, "message" => "Erreur lors de la mise à jour du combat"];
         }
     }
