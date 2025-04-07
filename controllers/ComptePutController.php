@@ -89,7 +89,7 @@ class ComptePutController extends AbstractController implements IController
         if (isset($this->form['idRole']) && !empty($this->form['idRole'])) {
             if (!ctype_digit($this->form['idRole'])) {
                 error_log("CYBERSEC l'id role n'est pas un entier'");
-                _400_Bad_Request()
+                _400_Bad_Request();
             }
             $this->idRole =  trim($this->form['pseudo']);
         }
